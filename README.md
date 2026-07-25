@@ -1,6 +1,8 @@
 # scrollmap-cursors
 
-Show cursor positions on the scrollbar. A layer package for [scrollmap](https://github.com/lumine-code/scrollmap).
+Show cursor positions on the scrollbar.
+
+A layer package for [scrollmap](https://github.com/lumine-code/scrollmap).
 
 ## Features
 
