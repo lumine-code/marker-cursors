@@ -7,9 +7,12 @@
     "url": "https://github.com/lumine-code/scrollmap-cursors/issues"
   },
   "keywords": [
-    "scrollmap",
-    "cursor",
-    "marker"
+    "overview-ruler",
+    "gutter",
+    "annotation",
+    "decoration",
+    "position",
+    "multi-cursor"
   ],
   "version": "1.0.0",
   "license": "MIT",
