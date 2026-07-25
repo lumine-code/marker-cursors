@@ -1,0 +1,4 @@
+.scrollmap .marker.marker-cursors {
+  background-color: var(--text-color-subtle);
+  z-index: 18;
+}

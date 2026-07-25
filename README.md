@@ -1,12 +1,31 @@
 # scrollmap-cursors
 
-Show cursor positions on the scrollbar.
+Show cursor positions on the scrollbar. A layer package for [scrollmap](https://github.com/lumine-code/scrollmap).
+
+## Features
+
+- **Cursor markers**: shows every cursor position on the scrollbar.
+- **Range merging**: adjacent cursor rows are merged into a single marker.
+- **Threshold**: hides markers when the cursor count exceeds a configurable limit.
+- **Inactive editors**: optionally hides markers in editors that are not focused.
 
 ## Installation
 
-To install `scrollmap-cursors` search for [scrollmap-cursors](https://web.pulsar-edit.dev/packages/scrollmap-cursors) in the Install pane of the Pulsar settings or run `ppm install scrollmap-cursors`. Alternatively, you can run `ppm install asiloisad/pulsar-scrollmap-cursors` to install a package directly from the GitHub repository.
+To install `scrollmap-cursors` search for _scrollmap-cursors_ in the Install pane of the Lumine settings or run `lumine --install lumine-code/scrollmap-cursors`.
 
-Layer package for [scrollmap](https://github.com/asiloisad/pulsar-scrollmap).
+## Customization
+
+The marker style can be adjusted in the `styles.less` file, e.g. change the marker color:
+
+```less
+.scrollmap .marker.marker-cursors {
+  background-color: var(--text-color-info);
+}
+```
+
+## Services
+
+- **scrollmap** (`1.0.0`): provided to render cursor position markers as a layer on the editor scrollbar.
 
 ## Contributing
 
