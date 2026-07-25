@@ -32,7 +32,7 @@ The marker style can be adjusted in the `styles.less` file, e.g. change the mark
 
 ## Services
 
-- **scrollmap** (`1.0.0`): provided to render cursor position and selection markers as a layer on the editor scrollbar.
+- **scrollmap** (`1.1.0`): provided to render cursor position and selection markers as a layer on the editor scrollbar.
 
 ## Contributing
 

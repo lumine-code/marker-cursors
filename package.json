@@ -30,7 +30,7 @@
   "providedServices": {
     "scrollmap": {
       "versions": {
-        "1.0.0": "provideScrollmap"
+        "1.1.0": "provideScrollmap"
       }
     }
   },
