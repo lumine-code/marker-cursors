@@ -74,6 +74,76 @@ describe("scrollmap-cursors", () => {
     expect(layer.items).toEqual([{ row: 12 }]);
   });
 
+  it("returns a full width item per non-empty selection, ahead of the cursors", () => {
+    editor.setSelectedScreenRange([
+      [3, 2],
+      [8, 4],
+    ]);
+    layer.update();
+    expect(layer.items).toEqual([
+      { row: 3, end: 8, position: "full", cls: "selection" },
+      { row: 8 },
+    ]);
+  });
+
+  it("ignores empty selections", () => {
+    editor.setCursorScreenPosition([6, 0]);
+    layer.update();
+    expect(layer.items).toEqual([{ row: 6 }]);
+  });
+
+  it("does not extend a selection onto a trailing row it only touches at column 0", () => {
+    editor.setSelectedScreenRange([
+      [3, 2],
+      [8, 0],
+    ]);
+    layer.update();
+    expect(layer.items[0]).toEqual({ row: 3, end: 7, position: "full", cls: "selection" });
+  });
+
+  it("keeps a single-row selection on its own row", () => {
+    editor.setSelectedScreenRange([
+      [4, 1],
+      [4, 6],
+    ]);
+    layer.update();
+    expect(layer.items[0]).toEqual({ row: 4, end: 4, position: "full", cls: "selection" });
+  });
+
+  it("returns an item per selection and only the last one when showAll is disabled", () => {
+    editor.setSelectedScreenRanges([
+      [
+        [1, 0],
+        [2, 3],
+      ],
+      [
+        [10, 0],
+        [11, 3],
+      ],
+    ]);
+    layer.update();
+    expect(layer.items.filter((item) => item.cls === "selection")).toEqual([
+      { row: 1, end: 2, position: "full", cls: "selection" },
+      { row: 10, end: 11, position: "full", cls: "selection" },
+    ]);
+
+    atom.config.set("scrollmap-cursors.showAll", false);
+    layer.update();
+    expect(layer.items.filter((item) => item.cls === "selection")).toEqual([
+      { row: 10, end: 11, position: "full", cls: "selection" },
+    ]);
+  });
+
+  it("omits selection markers when showSelections is disabled", () => {
+    atom.config.set("scrollmap-cursors.showSelections", false);
+    editor.setSelectedScreenRange([
+      [3, 2],
+      [8, 4],
+    ]);
+    layer.update();
+    expect(layer.items).toEqual([{ row: 8 }]);
+  });
+
   it("hides all markers when the item count exceeds the threshold", () => {
     atom.config.set("scrollmap-cursors.threshold", 1);
     editor.setCursorScreenPosition([0, 0]);
@@ -108,11 +178,21 @@ describe("scrollmap-cursors", () => {
     expect(layer.update).toHaveBeenCalled();
   });
 
+  it("updates the layer when a selection range changes", () => {
+    layer.update.calls.reset();
+    editor.setSelectedScreenRange([
+      [2, 0],
+      [5, 0],
+    ]);
+    expect(layer.update).toHaveBeenCalled();
+  });
+
   it("updates the layer when the settings change", () => {
     layer.update.calls.reset();
     atom.config.set("scrollmap-cursors.showAll", false);
     atom.config.set("scrollmap-cursors.threshold", 5);
     atom.config.set("scrollmap-cursors.inactiveShow", false);
-    expect(layer.update.calls.count()).toBe(3);
+    atom.config.set("scrollmap-cursors.showSelections", false);
+    expect(layer.update.calls.count()).toBe(4);
   });
 });
