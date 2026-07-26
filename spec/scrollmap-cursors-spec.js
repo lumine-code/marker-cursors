@@ -31,7 +31,7 @@ describe("scrollmap-cursors", () => {
     jasmine.attachToDOM(workspaceElement);
     const pack = await atom.packages.activatePackage("scrollmap-cursors");
     mainModule = pack.mainModule;
-    provider = mainModule.provideScrollmap();
+    provider = mainModule.provideScrollmapLayer();
     editor = await atom.workspace.open();
     editor.setText(Array(50).fill("hello world").join("\n"));
     layer = makeLayer(editor);
