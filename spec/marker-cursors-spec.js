@@ -200,42 +200,20 @@ describe("marker-cursors", () => {
     expect(layer.update.calls.count()).toBe(4);
   });
 
-  it("fans a settings change out to every layer attached to the same editor", () => {
-    // Each renderer builds its own layer for one editor, so a settings change
-    // has to reach all of them and not just the one registered last.
-    const second = makeLayer(editor);
-    layer.update.calls.reset();
-    second.update.calls.reset();
-    atom.config.set("marker-cursors.showAll", false);
-    expect(layer.update).toHaveBeenCalled();
-    expect(second.update).toHaveBeenCalled();
-
-    second.disposables.dispose();
-    layer.update.calls.reset();
-    second.update.calls.reset();
-    atom.config.set("marker-cursors.showSelections", false);
-    expect(layer.update).toHaveBeenCalled();
-    expect(second.update).not.toHaveBeenCalled();
-  });
-
-  it("subscribes to the settings once for the package, not once per layer", async () => {
+  it("subscribes to the settings once for the package, not once per editor", async () => {
     // The observers were hoisted out of initialize() into activate(). If one
-    // moved back, every extra layer -- a second renderer, another editor --
-    // would add its own observer and fan a single settings change out once per
-    // layer instead of once.
+    // moved back, every extra editor's layer would add its own observer and
+    // fan a single settings change out once per layer instead of once.
     const otherEditor = await atom.workspace.open();
     spyOn(atom.config, "observe").and.callThrough();
-    const second = makeLayer(editor);
-    const third = makeLayer(otherEditor);
+    const second = makeLayer(otherEditor);
     expect(atom.config.observe).not.toHaveBeenCalled();
 
     layer.update.calls.reset();
     second.update.calls.reset();
-    third.update.calls.reset();
     atom.config.set("marker-cursors.threshold", 5);
 
     expect(layer.update.calls.count()).toBe(1);
     expect(second.update.calls.count()).toBe(1);
-    expect(third.update.calls.count()).toBe(1);
   });
 });

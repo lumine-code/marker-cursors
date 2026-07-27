@@ -9,7 +9,7 @@ A marker layer package, drawn by [scrollmap](https://github.com/lumine-code/scro
 - **Cursor markers**: shows every cursor position on both maps.
 - **Selection markers**: shows every selected range as a translucent full width band.
 - **Range merging**: adjacent cursor rows are merged into a single marker.
-- **Threshold**: hides markers when the cursor count exceeds a configurable limit.
+- **Threshold**: hides markers when the cursor count exceeds a configurable limit; the limit is applied while computing the items, so it is deliberately not scaled by the maps' thresholdScale.
 - **Inactive editors**: optionally hides markers in editors that are not focused.
 
 ## Installation
