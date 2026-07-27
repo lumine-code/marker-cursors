@@ -217,4 +217,25 @@ describe("marker-cursors", () => {
     expect(layer.update).toHaveBeenCalled();
     expect(second.update).not.toHaveBeenCalled();
   });
+
+  it("subscribes to the settings once for the package, not once per layer", async () => {
+    // The observers were hoisted out of initialize() into activate(). If one
+    // moved back, every extra layer -- a second renderer, another editor --
+    // would add its own observer and fan a single settings change out once per
+    // layer instead of once.
+    const otherEditor = await atom.workspace.open();
+    spyOn(atom.config, "observe").and.callThrough();
+    const second = makeLayer(editor);
+    const third = makeLayer(otherEditor);
+    expect(atom.config.observe).not.toHaveBeenCalled();
+
+    layer.update.calls.reset();
+    second.update.calls.reset();
+    third.update.calls.reset();
+    atom.config.set("marker-cursors.threshold", 5);
+
+    expect(layer.update.calls.count()).toBe(1);
+    expect(second.update.calls.count()).toBe(1);
+    expect(third.update.calls.count()).toBe(1);
+  });
 });
