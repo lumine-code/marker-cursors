@@ -1,17 +1,18 @@
 {
-  "name": "scrollmap-cursors",
+  "name": "marker-cursors",
   "author": "lumine-code",
-  "description": "Show cursor positions and selections on the scrollbar.",
-  "repository": "https://github.com/lumine-code/scrollmap-cursors",
+  "description": "Show cursor positions and selections on the scrollbar and minimap.",
+  "repository": "https://github.com/lumine-code/marker-cursors",
   "bugs": {
-    "url": "https://github.com/lumine-code/scrollmap-cursors/issues"
+    "url": "https://github.com/lumine-code/marker-cursors/issues"
   },
   "keywords": [
     "overview-ruler",
     "gutter",
     "annotation",
     "decoration",
-    "position",
+    "scrollmap",
+    "minimap",
     "multi-cursor",
     "selection"
   ],
@@ -22,15 +23,15 @@
   },
   "main": "./lib/main",
   "scripts": {
-    "test": "cd ../../lumine && npm run test:only -- ../pkg_lumine/scrollmap-cursors/spec",
+    "test": "cd ../../lumine && npm run test:only -- ../pkg_lumine/marker-cursors/spec",
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
   "providedServices": {
-    "scrollmap.layer": {
+    "marker.layer": {
       "versions": {
-        "1.0.0": "provideScrollmapLayer"
+        "1.0.0": "provideMarkerLayer"
       }
     }
   },

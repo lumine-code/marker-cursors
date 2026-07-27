@@ -1,12 +1,12 @@
-# scrollmap-cursors
+# marker-cursors
 
-Show cursor positions and selections on the scrollbar.
+Show cursor positions and selections on the scrollbar and minimap.
 
-A layer package for [scrollmap](https://github.com/lumine-code/scrollmap).
+A marker layer package, drawn by [scrollmap](https://github.com/lumine-code/scrollmap) and [minimap](https://github.com/lumine-code/minimap).
 
 ## Features
 
-- **Cursor markers**: shows every cursor position on the scrollbar.
+- **Cursor markers**: shows every cursor position on both maps.
 - **Selection markers**: shows every selected range as a translucent full width band.
 - **Range merging**: adjacent cursor rows are merged into a single marker.
 - **Threshold**: hides markers when the cursor count exceeds a configurable limit.
@@ -14,25 +14,25 @@ A layer package for [scrollmap](https://github.com/lumine-code/scrollmap).
 
 ## Installation
 
-To install `scrollmap-cursors` search for _scrollmap-cursors_ in the Install pane of the Lumine settings or run `lumine --install lumine-code/scrollmap-cursors`.
+To install `marker-cursors` search for _marker-cursors_ in the Install pane of the Lumine settings or run `lumine --install lumine-code/marker-cursors`.
 
 ## Customization
 
 The marker style can be adjusted in the `styles.less` file, e.g. change the marker color and how strongly the selection band is tinted:
 
 ```less
-.scrollmap .marker.marker-cursors {
+.marker.marker-cursors {
   background-color: var(--text-color-info);
 }
 
-.scrollmap .marker.marker-cursors.selection {
+.marker.marker-cursors.selection {
   opacity: 0.4;
 }
 ```
 
 ## Services
 
-- **[scrollmap.layer](https://lumine-code.github.io/docs.html#services/scrollmap.layer)** (`1.0.0`): provided to render cursor position and selection markers as a layer on the editor scrollbar.
+- **[marker.layer](https://lumine-code.github.io/docs.html#services/marker.layer)** (`1.0.0`): provided to render cursor position and selection markers as a layer on the editor's overview maps.
 
 ## Contributing
 

@@ -1,13 +1,14 @@
 const { CompositeDisposable } = require("atom");
 
-describe("scrollmap-cursors", () => {
-  let workspaceElement, editor, mainModule, provider, layer;
+describe("marker-cursors", () => {
+  let workspaceElement, editor, mainModule, provider, layer, layers;
 
-  // Minimal stand-in for the layer object the scrollmap hub passes to
-  // `initialize` and `getItems` (see lumine-code/scrollmap lib/layer.js).
+  // Minimal stand-in for the layer object a renderer's marker host passes to
+  // `initialize` and `getItems` (see @lumine-code/marker-host lib/index.js).
   function makeLayer(targetEditor) {
     const fake = {
       editor: targetEditor,
+      props: provider,
       cache: new Map(),
       items: [],
       disposables: new CompositeDisposable(),
@@ -19,7 +20,7 @@ describe("scrollmap-cursors", () => {
       }
     });
     fake.updateSync = fake.update;
-    fake.refresh = () => {};
+    layers.push(fake);
     if (provider.initialize) {
       provider.initialize(fake);
     }
@@ -29,20 +30,23 @@ describe("scrollmap-cursors", () => {
   beforeEach(async () => {
     workspaceElement = atom.views.getView(atom.workspace);
     jasmine.attachToDOM(workspaceElement);
-    const pack = await atom.packages.activatePackage("scrollmap-cursors");
+    const pack = await atom.packages.activatePackage("marker-cursors");
     mainModule = pack.mainModule;
-    provider = mainModule.provideScrollmapLayer();
+    provider = mainModule.provideMarkerLayer();
     editor = await atom.workspace.open();
     editor.setText(Array(50).fill("hello world").join("\n"));
+    layers = [];
     layer = makeLayer(editor);
   });
 
   afterEach(() => {
-    layer.disposables.dispose();
+    for (const fake of layers) {
+      fake.disposables.dispose();
+    }
   });
 
-  it("activates and provides a scrollmap layer descriptor", () => {
-    expect(atom.packages.isPackageActive("scrollmap-cursors")).toBe(true);
+  it("activates and provides a marker layer descriptor", () => {
+    expect(atom.packages.isPackageActive("marker-cursors")).toBe(true);
     expect(provider.name).toBe("cursors");
     expect(typeof provider.description).toBe("string");
     expect(typeof provider.initialize).toBe("function");
@@ -67,7 +71,7 @@ describe("scrollmap-cursors", () => {
   });
 
   it("only shows the last cursor when showAll is disabled", () => {
-    atom.config.set("scrollmap-cursors.showAll", false);
+    atom.config.set("marker-cursors.showAll", false);
     editor.setCursorScreenPosition([3, 0]);
     editor.addCursorAtScreenPosition([12, 0]);
     layer.update();
@@ -127,7 +131,7 @@ describe("scrollmap-cursors", () => {
       { row: 10, end: 11, position: "full", cls: "selection" },
     ]);
 
-    atom.config.set("scrollmap-cursors.showAll", false);
+    atom.config.set("marker-cursors.showAll", false);
     layer.update();
     expect(layer.items.filter((item) => item.cls === "selection")).toEqual([
       { row: 10, end: 11, position: "full", cls: "selection" },
@@ -135,7 +139,7 @@ describe("scrollmap-cursors", () => {
   });
 
   it("omits selection markers when showSelections is disabled", () => {
-    atom.config.set("scrollmap-cursors.showSelections", false);
+    atom.config.set("marker-cursors.showSelections", false);
     editor.setSelectedScreenRange([
       [3, 2],
       [8, 4],
@@ -145,7 +149,7 @@ describe("scrollmap-cursors", () => {
   });
 
   it("hides all markers when the item count exceeds the threshold", () => {
-    atom.config.set("scrollmap-cursors.threshold", 1);
+    atom.config.set("marker-cursors.threshold", 1);
     editor.setCursorScreenPosition([0, 0]);
     editor.addCursorAtScreenPosition([10, 0]);
     layer.update();
@@ -153,13 +157,13 @@ describe("scrollmap-cursors", () => {
   });
 
   it("hides markers in inactive editors when inactiveShow is disabled", async () => {
-    atom.config.set("scrollmap-cursors.inactiveShow", false);
+    atom.config.set("marker-cursors.inactiveShow", false);
     editor.setCursorScreenPosition([4, 0]);
     await atom.workspace.open();
     layer.update();
     expect(layer.items).toEqual([]);
 
-    atom.config.set("scrollmap-cursors.inactiveShow", true);
+    atom.config.set("marker-cursors.inactiveShow", true);
     layer.update();
     expect(layer.items).toEqual([{ row: 4 }]);
   });
@@ -189,10 +193,28 @@ describe("scrollmap-cursors", () => {
 
   it("updates the layer when the settings change", () => {
     layer.update.calls.reset();
-    atom.config.set("scrollmap-cursors.showAll", false);
-    atom.config.set("scrollmap-cursors.threshold", 5);
-    atom.config.set("scrollmap-cursors.inactiveShow", false);
-    atom.config.set("scrollmap-cursors.showSelections", false);
+    atom.config.set("marker-cursors.showAll", false);
+    atom.config.set("marker-cursors.threshold", 5);
+    atom.config.set("marker-cursors.inactiveShow", false);
+    atom.config.set("marker-cursors.showSelections", false);
     expect(layer.update.calls.count()).toBe(4);
+  });
+
+  it("fans a settings change out to every layer attached to the same editor", () => {
+    // Each renderer builds its own layer for one editor, so a settings change
+    // has to reach all of them and not just the one registered last.
+    const second = makeLayer(editor);
+    layer.update.calls.reset();
+    second.update.calls.reset();
+    atom.config.set("marker-cursors.showAll", false);
+    expect(layer.update).toHaveBeenCalled();
+    expect(second.update).toHaveBeenCalled();
+
+    second.disposables.dispose();
+    layer.update.calls.reset();
+    second.update.calls.reset();
+    atom.config.set("marker-cursors.showSelections", false);
+    expect(layer.update).toHaveBeenCalled();
+    expect(second.update).not.toHaveBeenCalled();
   });
 });
