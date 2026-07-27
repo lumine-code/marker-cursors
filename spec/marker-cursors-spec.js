@@ -4,7 +4,7 @@ describe("marker-cursors", () => {
   let workspaceElement, editor, mainModule, provider, layer, layers;
 
   // Minimal stand-in for the layer object a renderer's marker host passes to
-  // `initialize` and `getItems` (see @lumine-code/marker-host lib/index.js).
+  // `initialize` and `getItems` (see lib/layer.js in the marker package).
   function makeLayer(targetEditor) {
     const fake = {
       editor: targetEditor,
