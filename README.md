@@ -18,9 +18,9 @@ To install `marker-cursors` search for _marker-cursors_ in the Install pane of t
 
 ## Customization
 
-The marker style can be adjusted in the `styles.less` file, e.g. change the marker color and how strongly the selection band is tinted:
+The marker style can be adjusted in the `styles.css` file, e.g. change the marker color and how strongly the selection band is tinted:
 
-```less
+```css
 .marker.marker-cursors {
   background-color: var(--text-color-info);
 }
