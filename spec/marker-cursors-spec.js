@@ -1,4 +1,4 @@
-const { CompositeDisposable } = require("atom");
+const { CompositeDisposable } = require("lumine");
 
 describe("marker-cursors", () => {
   let workspaceElement, editor, mainModule, provider, layer, layers;
@@ -28,12 +28,12 @@ describe("marker-cursors", () => {
   }
 
   beforeEach(async () => {
-    workspaceElement = atom.views.getView(atom.workspace);
+    workspaceElement = lumine.views.getView(lumine.workspace);
     jasmine.attachToDOM(workspaceElement);
-    const pack = await atom.packages.activatePackage("marker-cursors");
+    const pack = await lumine.packages.activatePackage("marker-cursors");
     mainModule = pack.mainModule;
     provider = mainModule.provideMarkerLayer();
-    editor = await atom.workspace.open();
+    editor = await lumine.workspace.open();
     editor.setText(Array(50).fill("hello world").join("\n"));
     layers = [];
     layer = makeLayer(editor);
@@ -46,7 +46,7 @@ describe("marker-cursors", () => {
   });
 
   it("activates and provides a marker layer descriptor", () => {
-    expect(atom.packages.isPackageActive("marker-cursors")).toBe(true);
+    expect(lumine.packages.isPackageActive("marker-cursors")).toBe(true);
     expect(provider.name).toBe("cursors");
     expect(typeof provider.description).toBe("string");
     expect(typeof provider.initialize).toBe("function");
@@ -71,7 +71,7 @@ describe("marker-cursors", () => {
   });
 
   it("only shows the last cursor when showAll is disabled", () => {
-    atom.config.set("marker-cursors.showAll", false);
+    lumine.config.set("marker-cursors.showAll", false);
     editor.setCursorScreenPosition([3, 0]);
     editor.addCursorAtScreenPosition([12, 0]);
     layer.update();
@@ -131,7 +131,7 @@ describe("marker-cursors", () => {
       { row: 10, end: 11, position: "full", cls: "selection" },
     ]);
 
-    atom.config.set("marker-cursors.showAll", false);
+    lumine.config.set("marker-cursors.showAll", false);
     layer.update();
     expect(layer.items.filter((item) => item.cls === "selection")).toEqual([
       { row: 10, end: 11, position: "full", cls: "selection" },
@@ -139,7 +139,7 @@ describe("marker-cursors", () => {
   });
 
   it("omits selection markers when showSelections is disabled", () => {
-    atom.config.set("marker-cursors.showSelections", false);
+    lumine.config.set("marker-cursors.showSelections", false);
     editor.setSelectedScreenRange([
       [3, 2],
       [8, 4],
@@ -149,7 +149,7 @@ describe("marker-cursors", () => {
   });
 
   it("hides all markers when the item count exceeds the threshold", () => {
-    atom.config.set("marker-cursors.threshold", 1);
+    lumine.config.set("marker-cursors.threshold", 1);
     editor.setCursorScreenPosition([0, 0]);
     editor.addCursorAtScreenPosition([10, 0]);
     layer.update();
@@ -157,13 +157,13 @@ describe("marker-cursors", () => {
   });
 
   it("hides markers in inactive editors when inactiveShow is disabled", async () => {
-    atom.config.set("marker-cursors.inactiveShow", false);
+    lumine.config.set("marker-cursors.inactiveShow", false);
     editor.setCursorScreenPosition([4, 0]);
-    await atom.workspace.open();
+    await lumine.workspace.open();
     layer.update();
     expect(layer.items).toEqual([]);
 
-    atom.config.set("marker-cursors.inactiveShow", true);
+    lumine.config.set("marker-cursors.inactiveShow", true);
     layer.update();
     expect(layer.items).toEqual([{ row: 4 }]);
   });
@@ -193,10 +193,10 @@ describe("marker-cursors", () => {
 
   it("updates the layer when the settings change", () => {
     layer.update.calls.reset();
-    atom.config.set("marker-cursors.showAll", false);
-    atom.config.set("marker-cursors.threshold", 5);
-    atom.config.set("marker-cursors.inactiveShow", false);
-    atom.config.set("marker-cursors.showSelections", false);
+    lumine.config.set("marker-cursors.showAll", false);
+    lumine.config.set("marker-cursors.threshold", 5);
+    lumine.config.set("marker-cursors.inactiveShow", false);
+    lumine.config.set("marker-cursors.showSelections", false);
     expect(layer.update.calls.count()).toBe(4);
   });
 
@@ -204,14 +204,14 @@ describe("marker-cursors", () => {
     // The observers were hoisted out of initialize() into activate(). If one
     // moved back, every extra editor's layer would add its own observer and
     // fan a single settings change out once per layer instead of once.
-    const otherEditor = await atom.workspace.open();
-    spyOn(atom.config, "observe").and.callThrough();
+    const otherEditor = await lumine.workspace.open();
+    spyOn(lumine.config, "observe").and.callThrough();
     const second = makeLayer(otherEditor);
-    expect(atom.config.observe).not.toHaveBeenCalled();
+    expect(lumine.config.observe).not.toHaveBeenCalled();
 
     layer.update.calls.reset();
     second.update.calls.reset();
-    atom.config.set("marker-cursors.threshold", 5);
+    lumine.config.set("marker-cursors.threshold", 5);
 
     expect(layer.update.calls.count()).toBe(1);
     expect(second.update.calls.count()).toBe(1);
