@@ -14,7 +14,7 @@ A marker layer package, drawn by [scrollmap](https://github.com/lumine-code/scro
 
 ## Installation
 
-To install `marker-cursors` search for _marker-cursors_ in the Install pane of the Lumine settings or run `lumine --install lumine-code/marker-cursors`.
+To install `marker-cursors` search for it in the Install pane of the Lumine settings, or run the command `lumine --install lumine-code/marker-cursors`.
 
 ## Customization
 
@@ -32,7 +32,7 @@ The marker style can be adjusted in the `styles.css` file, e.g. change the marke
 
 ## Services
 
-- **marker.layer** (`1.0.0`): provided to render cursor position and selection markers as a layer on the editor's overview maps.
+- `marker.layer`: provided to render cursor position and selection markers as a layer on the editor's overview maps.
 
 ## Contributing
 
