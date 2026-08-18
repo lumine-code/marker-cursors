@@ -1,5 +1,8 @@
 # marker-cursors
 
+> [!WARNING]
+> **This package is deprecated.** Its marker layer now ships with the [marker](https://github.com/lumine-code/marker) hub itself — the marker-* adapter packages were folded into their host packages, and this layer's settings moved to `marker.cursors.*`. This repository is archived and no longer maintained.
+
 Show cursor positions and selections on the scrollbar and minimap.
 
 A marker layer package, drawn by [scrollmap](https://github.com/lumine-code/scrollmap) and [minimap](https://github.com/lumine-code/minimap).
